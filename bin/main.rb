@@ -9,7 +9,13 @@ player1 = Player.new('player 1')
 player2 = Player.new('player 2')
 
 # initiate game
-Game.new(player1, player2)
+game = Game.new(player1, player2)
+
+loop do
+  game.new_match
+  game.play while game.status == 'continue'
+  break unless game.play_again?
+end
 
 # thanks for playing
 Ui.thanks

@@ -9,13 +9,12 @@ require_relative '../lib/ui.rb'
 class Game
   include Ui
 
+  attr_reader :status
+
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
-    new_match
   end
-
-  private
 
   def new_match
     @player1.add_mark(nil)
@@ -25,8 +24,25 @@ class Game
     @marked_cells = []
     @turn = @player2
     assign_players_signs
-    play
   end
+
+  def play
+    update_turn
+    prompt_cell
+    update
+  end
+
+  def play_again?
+    update_score
+    answer = nil
+    until %w[y n].include?(answer)
+      winlose = @status == 'win' ? display_wins(@turn.name) : display_draw
+      answer = prompt(game_over + winlose + prompt_play_again)
+    end
+    answer == 'y'
+  end
+
+  private
 
   def assign_players_signs
     while @player1.mark.nil?
@@ -35,16 +51,6 @@ class Game
     end
     @player1.add_mark(user_input)
     @player2.add_mark(@player1.mark == 'X' ? 'O' : 'X')
-  end
-
-  def play
-    while @status == 'continue'
-      update_turn
-      prompt_cell
-      update
-    end
-    update_score
-    play_again?
   end
 
   def update_turn
@@ -74,14 +80,5 @@ class Game
 
   def update_score
     @turn.add_score if @status == 'win'
-  end
-
-  def play_again?
-    answer = nil
-    until %w[y n].include?(answer)
-      winlose = @status == 'win' ? display_wins(@turn.name) : display_draw
-      answer = prompt(game_over + winlose + prompt_play_again)
-    end
-    new_match if answer == 'y'
   end
 end
