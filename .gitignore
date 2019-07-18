@@ -8,6 +8,7 @@ user
 *_p.c
 *_i.c
 *.pch
+*.vscode
 *.vssscc
 *.vspscc
 *.aps
