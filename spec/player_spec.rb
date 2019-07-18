@@ -6,18 +6,49 @@ RSpec.describe Player do
   let(:player_name) { 'player1' }
   let(:player) { Player.new(player_name) }
 
+  describe 'initiating player name' do
+    subject { player.name}
+    it { should be_eql(player_name) }
+  end
+
+  describe 'initiating score' do
+    subject { player.score}
+    it { should be_eql(0) }
+  end
+
+  describe '#add_mark' do
+    context 'adding mark : "X"' do
+      before { player.add_mark('X') }
+      it 'mark = "X" ' do
+        expect(player.mark).to eql('X')
+      end
+      it 'color = "31" ' do
+        expect(player.color).to eql('31')
+      end
+    end
+
+    context 'adding mark : "O"' do
+      before { player.add_mark('O') }
+      it 'mark = "X" ' do
+        expect(player.mark).to eql('O')
+      end
+      it 'color = "32" ' do
+        expect(player.color).to eql('32')
+      end
+    end
+  end
+
   describe '#add_score' do
     subject { player.score }
-    before { player.add_score}
+    before { player.add_score }
 
     context 'When adding score to zero' do
       it { should be_eql(1) }
     end
 
     context 'When adding score to one' do
-      before { player.add_score}
+      before { player.add_score }
       it { should be_eql(2) }
     end
-
   end
 end
