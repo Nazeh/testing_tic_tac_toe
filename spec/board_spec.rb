@@ -7,7 +7,7 @@ RSpec.describe Board do
   let(:mark) { %w[X O].sample }
 
   describe '#initialize' do
-    it 'will initiate readable 2D array attribute @board' do
+    it 'will initiate readable 2D array attr : board' do
       expect(subject.board).to eq([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     end
   end

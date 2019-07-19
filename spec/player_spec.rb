@@ -3,51 +3,39 @@
 require_relative '../lib/player'
 
 RSpec.describe Player do
-  let(:player_name) { 'player1' }
-  let(:player) { Player.new(player_name) }
+  # random alphanumerical player names
+  let(:player_name) { [*('A'..'Z'), *('0'..'9')].sample(8).join.to_s }
+  subject { Player.new(player_name) }
 
   describe '#initialize' do
-    it '@name = player_name' do
-      expect(player.name).to eql(player_name)
+    it 'will set readable attr : player name' do
+      expect(subject.name).to eql(player_name)
     end
-    it '@score = 0' do
-      expect(player.score).to eql(0)
+    it 'will set readable attr : score to Zero' do
+      expect(subject.score).to eql(0)
     end
   end
 
   describe '#add_mark' do
-    context 'adding mark : "X"' do
-      before { player.add_mark('X') }
-      it '@mark = "X" ' do
-        expect(player.mark).to eql('X')
-      end
-      it '@color = "31" ' do
-        expect(player.color).to eql('31')
-      end
-    end
+    mark = %w[X O].sample
+    color = mark == 'X' ? '31' : '32' # red : green
+    before { subject.add_mark(mark) }
 
-    context 'adding mark : "O"' do
-      before { player.add_mark('O') }
-      it '@mark = "X" ' do
-        expect(player.mark).to eql('O')
-      end
-      it '@color = "32" ' do
-        expect(player.color).to eql('32')
-      end
+    it 'will set readable attr : mark' do
+      expect(subject.mark).to eql(mark)
+    end
+    it 'will set readable attr : color according to mark' do
+      expect(subject.color).to eql(color)
     end
   end
 
   describe '#add_score' do
-    subject { player.score }
-    before { player.add_score }
-
-    context 'When adding score to zero' do
-      it { should be_eql(1) }
+    score = (0..15).to_a.sample
+    score.times do
+      before { subject.add_score }
     end
-
-    context 'When adding score to one' do
-      before { player.add_score }
-      it { should be_eql(2) }
+    it 'will add one to attr score' do
+      expect(subject.score).to eq(score)
     end
   end
 end
