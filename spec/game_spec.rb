@@ -43,8 +43,28 @@ RSpec.describe Game do
   end
 
   describe 'play' do
+   # let(:updates){subject.update_turn}
+
   end
 
   describe 'play_again?' do
+
+    before do
+      allow(subject).to receive(:prompt).and_return('X')
+      subject.new_match
+    end
+
+    before do
+      subject.instance_eval('@status="win"')
+      allow(subject).to receive(:prompt).and_return('n')
+      subject.play_again?
+    end
+
+    #let (:status) {'win'}
+
+    it 'updates score if status is win' do
+       expect(subject.instance_variable_get(:@turn).score).to eq(1)
+    end
+
   end
 end
