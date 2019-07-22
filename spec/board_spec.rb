@@ -25,7 +25,7 @@ RSpec.describe Board do
     cell = (1..9).to_a.sample
     it 'will return false if cell is already marked' do
       subject.update(cell, mark)
-      expect(subject.update(cell, mark)).to be_falsey
+      expect(subject.update(cell, mark)).to be false
     end
     it 'will update any cell in board' do
       subject.update(cell, mark)

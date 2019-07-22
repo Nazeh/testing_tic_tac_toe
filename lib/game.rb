@@ -21,14 +21,12 @@ class Game
     @status = 'continue'
     @rounds = 0
     @board = Board.new
-    @marked_cells = []
     @turn = @player2
-    assign_players_signs
+    assign_players_marks
   end
 
   def play
     update_turn
-    prompt_cell
     update
   end
 
@@ -44,7 +42,7 @@ class Game
 
   private
 
-  def assign_players_signs
+  def assign_players_marks
     while @player1.mark.nil?
       user_input = prompt("\nPlayer 1, Please choose a mark? (X/O)").upcase
       break if %w[X O].include?(user_input)
@@ -61,14 +59,13 @@ class Game
     cell = nil
     while cell.nil?
       answer = prompt("\n#{@turn.name} turn\nWhere would you like to put your mark?").to_i
-      cell = answer unless @marked_cells.include?(answer) || (1..9).to_a.include?(answer) == false
+      cell = answer unless @board.update(cell, @turn.mark) || (1..9).to_a.include?(answer)
     end
-    @marked_cells << cell
+    cell
   end
 
   def update
-    @board.update(@marked_cells.last, @turn.mark)
-    @status = update_status(@board.get_row_col_diagonals(@marked_cells.last), @turn.mark)
+    @status = update_status(@board.get_row_col_diagonals(prompt_cell), @turn.mark)
   end
 
   def update_status(row_col_diagonals, mark)

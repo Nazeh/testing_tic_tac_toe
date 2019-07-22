@@ -13,6 +13,7 @@ class Board
 
   def update(cell, mark)
     return false if @board[row_index(cell)][col_index(cell)].is_a?(String)
+
     @board[row_index(cell)][col_index(cell)] = mark
   end
 
