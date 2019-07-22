@@ -17,7 +17,6 @@ class Game
   end
 
   def new_match
-    @player1.add_mark(nil)
     @status = 'continue'
     @rounds = 0
     @board = Board.new
@@ -26,12 +25,13 @@ class Game
   end
 
   def play
-    update_turn
-    update
+    @turn = ([@player1, @player2] - [@turn]).first
+    @status = update_status(@board.get_row_col_diagonals(prompt_cell), @turn.mark)
   end
 
   def play_again?
-    update_score
+    @turn.add_score if @status == 'win'
+
     answer = nil
     until %w[y n].include?(answer)
       winlose = @status == 'win' ? display_wins(@turn.name) : display_draw
@@ -42,8 +42,15 @@ class Game
 
   private
 
+  def prompt(message)
+    display
+    puts message
+    gets.chomp.downcase.to_s
+  end
+
   def assign_players_marks
-    while @player1.mark.nil?
+    user_input = nil
+    loop do
       user_input = prompt("\nPlayer 1, Please choose a mark? (X/O)").upcase
       break if %w[X O].include?(user_input)
     end
@@ -51,21 +58,13 @@ class Game
     @player2.add_mark(@player1.mark == 'X' ? 'O' : 'X')
   end
 
-  def update_turn
-    @turn = ([@player1, @player2] - [@turn]).first
-  end
-
   def prompt_cell
     cell = nil
     while cell.nil?
       answer = prompt("\n#{@turn.name} turn\nWhere would you like to put your mark?").to_i
-      cell = answer unless @board.update(cell, @turn.mark) || (1..9).to_a.include?(answer)
+      cell = answer if @board.update(answer, @turn.mark) || (1..9).to_a.include?(answer)
     end
     cell
-  end
-
-  def update
-    @status = update_status(@board.get_row_col_diagonals(prompt_cell), @turn.mark)
   end
 
   def update_status(row_col_diagonals, mark)
@@ -73,9 +72,5 @@ class Game
     @status = 'draw' if @rounds >= 9
     @status = 'win' if row_col_diagonals.any? { |element| element.count(mark) == 3 }
     @status
-  end
-
-  def update_score
-    @turn.add_score if @status == 'win'
   end
 end
