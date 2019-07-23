@@ -7,7 +7,7 @@ RSpec.describe Board do
   let(:mark) { %w[X O].sample }
 
   describe '#initialize' do
-    it 'will initiate readable 2D array attr : board' do
+    it 'will initiate readable 2D array attr @board' do
       expect(subject.board).to eq([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     end
   end
@@ -27,7 +27,7 @@ RSpec.describe Board do
       subject.update(cell, mark)
       expect(subject.update(cell, mark)).to be false
     end
-    it 'will update any cell in board' do
+    it 'will update any cell in @board' do
       subject.update(cell, mark)
       expect(board[row(cell)][col(cell)]).to eq(mark)
     end

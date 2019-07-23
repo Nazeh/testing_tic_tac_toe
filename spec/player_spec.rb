@@ -8,10 +8,10 @@ RSpec.describe Player do
   subject { Player.new(player_name) }
 
   describe '#initialize' do
-    it 'will set readable attr : player name' do
+    it 'will set readable attr @player_name' do
       expect(subject.name).to eql(player_name)
     end
-    it 'will set readable attr : score to Zero' do
+    it 'will set readable attr @score to Zero' do
       expect(subject.score).to eql(0)
     end
   end
@@ -21,10 +21,10 @@ RSpec.describe Player do
     color = mark == 'X' ? '31' : '32' # red : green
     before { subject.add_mark(mark) }
 
-    it 'will set readable attr : mark' do
+    it 'will set readable attr @mark' do
       expect(subject.mark).to eql(mark)
     end
-    it 'will set readable attr : color according to mark' do
+    it 'will set readable attr @color according to @mark' do
       expect(subject.color).to eql(color)
     end
   end
@@ -34,7 +34,7 @@ RSpec.describe Player do
     score.times do
       before { subject.add_score }
     end
-    it 'will add one to attr score' do
+    it 'will add one to attr @score' do
       expect(subject.score).to eq(score)
     end
   end
