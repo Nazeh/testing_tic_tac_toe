@@ -7,13 +7,13 @@ require_relative '../lib/ui.rb'
 player1 = Player.new('player 1')
 player2 = Player.new('player 2')
 
-# initiate game
-game = Game.new(player1, player2)
-
 loop do
-  game.new_match
-  game.play while game.status == 'continue'
-  break unless game.play_again?
+  # initiate game
+  game = Game.new(player1, player2)
+
+  Engine.play(game) while game.status == 'continue'
+
+  break unless Engine.play_again?
 end
 
 # thanks for playing

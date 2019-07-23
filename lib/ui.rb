@@ -4,6 +4,12 @@
 module Ui
   module_function
 
+  def prompt(message)
+    display
+    puts message
+    gets.chomp.downcase.to_s
+  end
+
   def display
     puts `clear`
     display_instructions
@@ -82,11 +88,5 @@ module Ui
     puts "\n"
     puts ' Score '.center(50, '=')
     puts " #{@player1.name} : #{@player1.score}  #{@player2.name} : #{@player2.score} ".center(50, '=')
-  end
-
-  def prompt(message)
-    display
-    puts message
-    gets.chomp.downcase.to_s
   end
 end
