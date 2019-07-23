@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../lib/board.rb'
-require_relative '../lib/player.rb'
-require_relative '../lib/ui.rb'
-
-# class Game Initiate a new board (using Board class) and status,
-# plays one match, and update the UI (using Ui module) and change
-# the player score in the mean time.
+# class Game Initiate @status, @moves, and @turn and able to increment on @moves, switch @turn
+# as well as update the @status by examining a mark and row_col_diagonals of last cell marked.
 class Game
   attr_reader :status
+  attr_reader :moves
+  attr_reader :turn
 
   def initialize
     @status = 'continue'
@@ -16,12 +13,12 @@ class Game
     @turn = 0
   end
 
-  def iterate
+  def update
     @moves += 1
-    @turn += 1
+    @turn = (@turn.zero? ? 1 : 0)
   end
 
-  def update_status(row_col_diagonals, mark)
+  def check_status(row_col_diagonals, mark)
     @status = 'draw' if @moves >= 9
     @status = 'win' if row_col_diagonals.any? { |element| element.count(mark) == 3 }
     @status

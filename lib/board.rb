@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Board class initiate a 2D Array, and it can update it, fetch it
-# and return the row, col and/or diagonals of any cell
+# and return the row, col and/or diagonals of any given cell.
 class Board
   attr_reader :board
 

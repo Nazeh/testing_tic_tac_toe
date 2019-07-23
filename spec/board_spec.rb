@@ -27,7 +27,7 @@ RSpec.describe Board do
       subject.update(cell, mark)
       expect(subject.update(cell, mark)).to be false
     end
-    it 'will update any cell in @board' do
+    it 'will update any cell in @board with the given mark' do
       subject.update(cell, mark)
       expect(board[row(cell)][col(cell)]).to eq(mark)
     end
