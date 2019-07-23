@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 require_relative '../lib/board.rb'
+require_relative '../lib/player.rb'
 require_relative '../lib/ui.rb'
 
 # class Game Initiate a new board (using Board class) and status,
 # plays one match, and update the UI (using Ui module) and change
 # the player score in the mean time.
 class Game
-  include Ui
-
   attr_reader :status
 
   def initialize(player1, player2)
@@ -18,23 +17,23 @@ class Game
 
   def new_match
     @status = 'continue'
-    @rounds = 0
+    @moves = 0
     @board = Board.new
-    @turn = @player2
+    @cur_player = @player1
     assign_players_marks
   end
 
   def play
-    @turn = ([@player1, @player2] - [@turn]).first
-    @status = update_status(@board.get_row_col_diagonals(prompt_cell), @turn.mark)
+    @cur_player = ([@player1, @player2] - [@cur_player]).first
+    @status = update_status(@board.get_row_col_diagonals(prompt_cell), @cur_player.mark)
   end
 
   def play_again?
-    @turn.add_score if @status == 'win'
+    @cur_player.add_score if @status == 'win'
 
     answer = nil
     until %w[y n].include?(answer)
-      winlose = @status == 'win' ? display_wins(@turn.name) : display_draw
+      winlose = @status == 'win' ? display_wins(@cur_player.name) : display_draw
       answer = prompt(game_over + winlose + prompt_play_again)
     end
     answer == 'y'
@@ -43,7 +42,6 @@ class Game
   private
 
   def prompt(message)
-    display
     puts message
     gets.chomp.downcase.to_s
   end
@@ -61,8 +59,8 @@ class Game
   def prompt_cell
     cell = nil
     while cell.nil?
-      answer = prompt("\n#{@turn.name} turn\nWhere would you like to put your mark?").to_i
-      cell = answer if @board.update(answer, @turn.mark) || (1..9).to_a.include?(answer)
+      answer = prompt("\n#{@cur_player.name} cur_player\nWhere would you like to put your mark?").to_i
+      cell = answer if @board.update(answer, @cur_player.mark) || (1..9).to_a.include?(answer)
     end
     cell
   end
