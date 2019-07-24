@@ -26,6 +26,7 @@ class Game
     @moves += 1
     update_status(@board.row_col_diagonals(cell), mark)
     switch_players if @status == 'continue'
+    @current_player.add_score if status == 'win'
   end
 
   private

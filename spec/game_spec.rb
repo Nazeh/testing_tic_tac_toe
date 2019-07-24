@@ -80,6 +80,9 @@ RSpec.describe Game do
       it 'will not switch @current_player' do
         expect(subject.current_player.mark).to eq(%w[X O][plays.length % 5])
       end
+      it 'will update @current_player score' do
+        expect(subject.current_player.score).to eq(1)
+      end
     end
 
     context 'when col is completed' do
@@ -91,6 +94,9 @@ RSpec.describe Game do
       it 'will not switch @current_player' do
         expect(subject.current_player.mark).to eq(%w[X O][plays.length % 5])
       end
+      it 'will update @current_player score' do
+        expect(subject.current_player.score).to eq(1)
+      end
     end
 
     context 'when diagonal is completed' do
@@ -101,6 +107,9 @@ RSpec.describe Game do
       end
       it 'will not switch @current_player' do
         expect(subject.current_player.mark).to eq(%w[X O][plays.length % 5])
+      end
+      it 'will update @current_player score' do
+        expect(subject.current_player.score).to eq(1)
       end
     end
   end
