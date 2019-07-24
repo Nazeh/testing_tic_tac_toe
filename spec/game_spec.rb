@@ -1,51 +1,50 @@
 # frozen_string_literal: true
 
 require_relative '../lib/game'
+require_relative '../lib/player'
 
 RSpec.describe Game do
+  let(:player1) { Player.new('player 1') }
+  let(:player2) { Player.new('player 2') }
+  subject { Game.new(player1, player2) }
+
   describe '#initialize' do
+    it 'will take two Player instances and assign them to readable attr @player1 & @player2' do
+      expect(subject.player1).to eq(player1)
+      expect(subject.player2).to eq(player2)
+    end
     it 'will initiate readable @status = "continue"' do
       expect(subject.status).to eq('continue')
     end
-    it 'will initiate readable @moves = Zero' do
-      expect(subject.moves).to eq(0)
-    end
-    it 'will initiate readable @turn = 1' do
-      expect(subject.turn).to eq(0)
+    it 'will initiate readable @board and set it to new board' do
+      expect(subject.board.board).to eq(Board.new.board)
     end
   end
 
-  describe '#update' do
-    increments = (0..15).to_a.sample
-    increments.times do
-      before { subject.update }
+  describe '#set_first_player' do
+    context 'when it is given 1' do
+      before {subject.set_first_player(1)}
+      it ' will add_mark X to @player1' do
+        expect(subject.player1.mark).to eq('X')
+      end
+      it ' will add_mark O to @player2' do
+        expect(subject.player2.mark).to eq('O')
+      end
+      it ' will initiate readable attr @current_player and set it to @player1' do
+        expect(subject.current_player).to eq(subject.player1)
+      end
     end
-    it 'will incriment on @moves' do
-      expect(subject.moves).to eq(increments)
-    end
-    it 'will switch @turn' do
-      expect(subject.turn).to eq(increments % 2)
-    end
-  end
-
-  describe '#check_status' do
-    it 'will return and set @status to "draw" after 9 moves' do
-      9.times { subject.update }
-      expect(subject.check_status([], 'X')).to eq('draw')
-      expect(subject.status).to eq('draw')
-    end
-
-    let(:mark) { %w[X O].sample }
-    it 'will return and set @status to "win" if any col, row or diagonal contain 3 instances of mark' do
-      row_col_diagonals_test = [
-        [4, mark, 6],
-        [2, mark, 8],
-        [mark, mark, mark],
-        [3, mark, 7]
-      ]
-
-      expect(subject.check_status(row_col_diagonals_test, mark)).to eq('win')
-      expect(subject.status).to eq('win')
+    context 'when it is given 2' do
+      before {subject.set_first_player(1)}
+      it ' will add_mark X to @player2' do
+        expect(subject.player1.mark).to eq('X')
+      end
+      it ' will add_mark O to @player1' do
+        expect(subject.player2.mark).to eq('O')
+      end
+      it ' will initiate readable attr @current_player and set it to @player2' do
+        expect(subject.current_player).to eq(subject.player1)
+      end
     end
   end
 end

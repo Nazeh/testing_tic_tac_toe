@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Board class initiate a 2D Array, and it can update it, fetch it
-# and return the row, col and/or diagonals of any given cell.
+# Board class initiate a 2D Array, and it can update it, fetch it,
+# check availabilty of any cell,and return the row, col and/or diagonals of any given cell.
 class Board
   attr_reader :board
 
@@ -12,12 +12,14 @@ class Board
   end
 
   def update(cell, mark)
-    return false if @board[row_index(cell)][col_index(cell)].is_a?(String)
-
     @board[row_index(cell)][col_index(cell)] = mark
   end
 
-  def get_row_col_diagonals(cell)
+  def cell_available?(cell)
+    @board[row_index(cell)][col_index(cell)].is_a?(Integer)
+  end
+
+  def row_col_diagonals(cell)
     row_col_diagonals = [get_row(cell), get_col(cell)]
     row_col_diagonals << get_diagonals(cell).first unless cell.even?
     row_col_diagonals << get_diagonals(cell).last if cell == 5

@@ -1,30 +1,59 @@
 # frozen_string_literal: true
 
-# UI module contains methods for showing the board, prompt messages and game status!
+require_relative '../lib/board'
+
+# Ui module contains a collection of methods for displaying state of the game and prompt messages.
 module Ui
   module_function
 
+  def choose_mark
+    user_input = prompt('Player 1, Please choose a mark? (X/O)').upcase
+    loop do
+      break if %w[X O].include?(user_input)
+
+      user_input = prompt('Please enter a valid mark! (X/O)').upcase
+    end
+    user_input
+  end
+
+  def play_again?
+    answer = nil
+    until %w[y n].include?(answer)
+      winlose = @status == 'win' ? display_wins(@cur_player.name) : display_draw
+      answer = prompt(game_over + winlose + prompt_play_again)
+    end
+    answer == 'y'
+  end
+
+  def prompt_cell(cell, _mark)
+    cell = nil
+    while cell.nil?
+      answer = prompt("\n#{@cur_player.name} cur_player\nWhere would you like to put your mark?").to_i
+      cell = answer if @board.update(answer, @cur_player.mark) || (1..9).to_a.include?(answer)
+    end
+    cell
+  end
+
   def prompt(message)
-    display
+    display(board)
     puts message
     gets.chomp.downcase.to_s
   end
 
-  def display
+  def display(board = Board.new)
     puts `clear`
     display_instructions
-    display_board
-    display_score
+    display_board(board)
   end
 
   def thanks
+    display_instructions
+    display_board(Board.new)
     puts "\n*************************************************"
     puts 'Thanks for playing our Tic Tac Toe Implementation'
     puts "\n****** Authors' Github: Nazeh / tundeiness ******"
     puts "*************************************************\n"
   end
-
-  private
 
   def display_instructions
     puts "\n"
@@ -64,8 +93,8 @@ module Ui
     "\n\nWould you like to play another match? (Y/N)"
   end
 
-  def display_board
-    @board.board.reverse.each_with_index do |row, i|
+  def display_board(board)
+    board.board.reverse.each_with_index do |row, i|
       line(row)
       puts '---+---+---'.center(50) unless i == 2
     end
@@ -82,6 +111,10 @@ module Ui
             @player1.mark == text ? @player1.color : @player2.color
           else 1
           end}m#{text}"
+  end
+
+  def color(text, color)
+    "\e[#{color}m#{text}\e[0m"
   end
 
   def display_score

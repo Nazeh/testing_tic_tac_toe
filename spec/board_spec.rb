@@ -23,21 +23,29 @@ RSpec.describe Board do
 
   describe '#update' do
     cell = (1..9).to_a.sample
-    it 'will return false if cell is already marked' do
-      subject.update(cell, mark)
-      expect(subject.update(cell, mark)).to be false
-    end
     it 'will update any cell in @board with the given mark' do
       subject.update(cell, mark)
       expect(board[row(cell)][col(cell)]).to eq(mark)
     end
   end
 
-  describe '#get_row_col_diagonals' do
+  describe '#cell_available?' do
+    cell = (1..9).to_a.sample
+    it 'will return true if cell is empty' do
+      expect(subject.cell_available?(cell)).to be true
+    end
+
+    it 'will return false if cell is marked' do
+      subject.update(cell, mark)
+      expect(subject.cell_available?(cell)).to be false
+    end
+  end
+
+  describe '#row_col_diagonals' do
     context 'When cell == 5' do
       cell = 5
       it 'will return row, col, and two diagonals' do
-        expect(subject.get_row_col_diagonals(cell)).to eq(
+        expect(subject.row_col_diagonals(cell)).to eq(
           [
             [board[row(cell)][0], board[row(cell)][1], board[row(cell)][2]],
             [board[0][col(cell)], board[1][col(cell)], board[2][col(cell)]],
@@ -50,7 +58,7 @@ RSpec.describe Board do
     context 'When cell is even' do
       cell = [2, 4, 6, 8].sample
       it 'will return row col only' do
-        expect(subject.get_row_col_diagonals(cell)).to eq(
+        expect(subject.row_col_diagonals(cell)).to eq(
           [
             [board[row(cell)][0], board[row(cell)][1], board[row(cell)][2]],
             [board[0][col(cell)], board[1][col(cell)], board[2][col(cell)]]
@@ -61,7 +69,7 @@ RSpec.describe Board do
     context 'When cell is 1 or 9' do
       cell = [1, 9].sample
       it 'will return row col and left to right diagonal' do
-        expect(subject.get_row_col_diagonals(cell)).to eq(
+        expect(subject.row_col_diagonals(cell)).to eq(
           [
             [board[row(cell)][0], board[row(cell)][1], board[row(cell)][2]],
             [board[0][col(cell)], board[1][col(cell)], board[2][col(cell)]],
@@ -73,7 +81,7 @@ RSpec.describe Board do
     context 'When cell is 3 or 7' do
       cell = [3, 7].sample
       it 'will return row col and right to left diagonal' do
-        expect(subject.get_row_col_diagonals(cell)).to eq(
+        expect(subject.row_col_diagonals(cell)).to eq(
           [
             [board[row(cell)][0], board[row(cell)][1], board[row(cell)][2]],
             [board[0][col(cell)], board[1][col(cell)], board[2][col(cell)]],

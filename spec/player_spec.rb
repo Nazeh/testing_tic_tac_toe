@@ -17,25 +17,15 @@ RSpec.describe Player do
   end
 
   describe '#add_mark' do
-    context 'when given a mark X or O' do
-      mark = %w[X O].sample
-      color = mark == 'X' ? '31' : '32' # red : green
-      before { subject.add_mark(mark) }
+    mark = %w[X O].sample
+    color = mark == 'X' ? '31' : '32' # red : green
+    before { subject.add_mark(mark) }
 
-      it 'will set readable attr @mark to X or O' do
-        expect(subject.mark).to eql(mark)
-      end
-      it 'will set readable attr @color according to @mark' do
-        expect(subject.color).to eql(color)
-      end
+    it 'will set readable attr @mark to X or O' do
+      expect(subject.mark).to eql(mark)
     end
-
-    context 'when given a mark other than X or O' do
-      mark = ([*('A'..'Z'), *('a'..'z'), *('0'..'9')] - %w[X O]).sample
-      it 'will return false and mark will stay nil' do
-        expect(subject.add_mark(mark)).to be false
-        expect(subject.mark).to be nil
-      end
+    it 'will set readable attr @color according to @mark' do
+      expect(subject.color).to eql(color)
     end
   end
 
@@ -44,7 +34,7 @@ RSpec.describe Player do
     increments.times do
       before { subject.add_score }
     end
-    it 'will add increment attr @score' do
+    it 'will increment attr @score' do
       expect(subject.score).to eq(increments)
     end
   end

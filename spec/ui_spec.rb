@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/ui.rb'
-require_relative '../lib/game.rb'
+require_relative '../lib/ui'
 
-RSpec.describe 'Ui' do
-  let(:new_game) { Game.new }
+RSpec.describe Ui do
 end
