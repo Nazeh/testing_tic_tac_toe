@@ -12,15 +12,14 @@ player1 = Player.new(Ui.prompt_name('Player 1'))
 player2 = Player.new(Ui.prompt_name('Player 2'))
 
 loop do
-  # initiate new game
-  game = game.new(player1, player2)
-
   # choose who plays first
   first_player = Ui.prompt_first_player(player1, player2)
-  game.set_first_player(first_player)
+
+  # initiate new game
+  game = game.new(player1, player2, first_player)
 
   # play game
-  while game.status = 'continue'
+  while game.status == 'continue'
     cell = Ui.prompt_cell(game)
     game.next_move(cell)
   end

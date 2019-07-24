@@ -26,7 +26,6 @@ module Ui
   end
 
   def prompt_cell(cell, _mark)
-    cell = nil
     while cell.nil?
       answer = prompt("\n#{@cur_player.name} cur_player\nWhere would you like to put your mark?").to_i
       cell = answer if @board.update(answer, @cur_player.mark) || (1..9).to_a.include?(answer)
