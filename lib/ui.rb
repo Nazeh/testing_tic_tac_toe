@@ -1,124 +1,116 @@
 # frozen_string_literal: true
 
 require_relative '../lib/board'
+require_relative '../lib/player'
 
 # Ui module contains a collection of methods for displaying state of the game and prompt messages.
 module Ui
-  module_function
-
-  def choose_mark
-    user_input = prompt('Player 1, Please choose a mark? (X/O)').upcase
-    loop do
-      break if %w[X O].include?(user_input)
-
-      user_input = prompt('Please enter a valid mark! (X/O)').upcase
+  class << self
+    def prompt_name(player_number)
+      display_template(Player.new('Player 1'), Player.new('Player 2'), Board.new)
+      puts "\n#{player_number}: what's your name?  default: #{player_number}"
+      answer = gets.chomp[0...8]
+      answer.empty? ? player_number : answer
     end
-    user_input
-  end
 
-  def play_again?
-    answer = nil
-    until %w[y n].include?(answer)
-      winlose = @status == 'win' ? display_wins(@cur_player.name) : display_draw
-      answer = prompt(game_over + winlose + prompt_play_again)
+    def prompt_first_player(player1, player2)
+      message = "Who plays first 1:#{player1.name}, or 2:#{player2.name}? (1/2)"
+      error_message = "#{color('Invalid!', 31)} please choose between (1/2)"
+
+      answer = prompt(player1, player2, Board.new, message)
+      answer = prompt(player1, player2, Board.new, error_message) until ['1', '2', ''].include?(answer)
+      answer.to_i
     end
-    answer == 'y'
-  end
 
-  def prompt_cell(cell, _mark)
-    while cell.nil?
-      answer = prompt("\n#{@cur_player.name} cur_player\nWhere would you like to put your mark?").to_i
-      cell = answer if @board.update(answer, @cur_player.mark) || (1..9).to_a.include?(answer)
+    def prompt_cell(game)
+      message = "#{color(game.current_player.name.to_s, game.current_player.color)}'s turn! choose a cell to mark!"
+      answer = prompt(game.player1, game.player2, game.board, message).to_i
+      check_cell_valid?(answer, game)
     end
-    cell
-  end
 
-  def prompt(message)
-    display(board)
-    puts message
-    gets.chomp.downcase.to_s
-  end
+    def play_again?(game)
+      game_status = game_end(game)
+      message = "#{game_status} \nWould you like to play again? (y/n)"
+      error_message = "#{game_status} \n#{color('Invalid!', 31)} please choose (y/n)"
 
-  def display(board = Board.new)
-    puts `clear`
-    display_instructions
-    display_board(board)
-  end
-
-  def thanks
-    display_instructions
-    display_board(Board.new)
-    puts "\n*************************************************"
-    puts 'Thanks for playing our Tic Tac Toe Implementation'
-    puts "\n****** Authors' Github: Nazeh / tundeiness ******"
-    puts "*************************************************\n"
-  end
-
-  def display_instructions
-    puts "\n"
-    puts '******** Welcome To Our Tic-Tac-Toe Game! ********'
-    puts '**************************************************'
-    puts '=================================================='
-    puts '**************************************************'
-    puts 'Two players will take turns to mark the spaces on '
-    puts 'a 3x3 grid. The player who succeeds in placing 3  '
-    puts 'of their marks in a horizontal, vertical, or      '
-    puts 'diagonal row wins the game. When there are no     '
-    puts 'more spaces left to mark, it is consider a draw.  '
-    puts 'To place a mark on the grid, type the number on   '
-    puts 'the space you would like to mark! As shown below. '
-    puts "Good luck! \n "
-  end
-
-  def game_over
-    "\n*************************************************\n"\
-      "****************    GAME OVER    ****************\n"\
-      '*************************************************'
-  end
-
-  def display_wins(player)
-    "\n*************************************************\n"\
-      "****************  #{player} Wins  ****************\n"\
-      '*************************************************'
-  end
-
-  def display_draw
-    "\n*************************************************\n"\
-      "****************   It's a Draw!  ****************\n"\
-      '*************************************************'
-  end
-
-  def prompt_play_again
-    "\n\nWould you like to play another match? (Y/N)"
-  end
-
-  def display_board(board)
-    board.board.reverse.each_with_index do |row, i|
-      line(row)
-      puts '---+---+---'.center(50) unless i == 2
+      answer = prompt(game.player1, game.player2, game.board, message)
+      answer = prompt(game.player1, game.player2, game.board, error_message) until ['y', 'n', ''].include?(answer)
+      answer != 'n'
     end
-  end
 
-  def line(row)
-    # 73 and row.count to keep the row centered after adding the colorize() characters
-    row = "#{colorize(row[0])}\e[0m | #{colorize(row[1])}\e[0m | #{colorize(row[2])}\e[0m"
-    puts row.center(73 + row.count('X') + row.count('O'))
-  end
+    def thanks
+      display_template(Player.new('Player 1'), Player.new('Player 2'), Board.new)
+      puts "\n" + Line +
+           ' Thanks for playing Tic Tac Toe '.center(50, '*') + "\n" + Line +
+           " Authors' Github: Nazeh  / tundeiness ".center(50, '*') + "\n" + Line
+    end
 
-  def colorize(text)
-    "\e[#{if %w[X O].include?(text)
-            @player1.mark == text ? @player1.color : @player2.color
-          else 1
-          end}m#{text}"
-  end
+    private
 
-  def color(text, color)
-    "\e[#{color}m#{text}\e[0m"
-  end
+    Line = '*' * 50 + "\n"
 
-  def display_score
-    puts "\n"
-    puts ' Score '.center(50, '=')
-    puts " #{@player1.name} : #{@player1.score}  #{@player2.name} : #{@player2.score} ".center(50, '=')
+    def check_cell_valid?(answer, game)
+      error_message = "#{color('Invalid!', 31)} please choose unmarked cell between [1..9]"
+
+      until (1..9).to_a.include?(answer) && game.board.cell_available?(answer)
+        answer = prompt(game.player1, game.player2, game.board, error_message).to_i
+      end
+      answer
+    end
+
+    def prompt(player1, player2, board, message)
+      display_template(player1, player2, board)
+      puts "\n" + message
+      gets.chomp.downcase
+    end
+
+    def display_template(player1, player2, board)
+      puts `clear`
+      puts Line +
+           ' Welcome To Our Tic-Tac-Toe Game! '.center(50, '*') +
+           "\n" + Line +
+           ' Instructions '.center(50, '*') +
+           "\n** Each player should use an 8 characters name ***" \
+           "\n** Choose who will play first, using the X mark **" \
+           "\n** Each turn a player will choose a cell to mark *" \
+           "\n** Who marks a full row, col or a diagonal wins **" \
+           "\n** Players draw, if all cells are marked w/ win **" \
+           "\n** You can play again & players' score persist ***" \
+           "\n" + Line
+      display_board(board)
+      display_score(player1, player2)
+    end
+
+    def display_board(board = Board.new)
+      puts '****************                 *****************'
+      board.board.reverse.each_with_index do |row, i|
+        puts "    #{colorize(row[0])} | #{colorize(row[1])} | #{colorize(row[2])}    ".center(77, '*')
+        puts '****************   ---+---+---   *****************' unless i == 2
+      end
+      puts '****************                 *****************'
+    end
+
+    def colorize(cell)
+      cell_collor = cell == 'X' ? 31 : 32
+      color(cell, %w[X O].include?(cell) ? cell_collor : 11)
+    end
+
+    def color(text, color)
+      "\e[#{color.nil? ? 11 : color}m#{text}\e[0m"
+    end
+
+    def display_score(player1, player2)
+      puts '********************* Score  *********************'
+      puts " #{color(player1.name, player1.color)} : #{player1.score} " \
+          " #{color(player2.name, player2.color)} : #{player2.score} ".center(68, '*') + "\n" + Line
+    end
+
+    def game_end(game)
+      if game.status == 'draw'
+        Line + "  It's a DRAW  ".center(50, '*') + "\n" + Line
+      else
+        Line + "  #{color(game.current_player.name, game.current_player.color)} WINS  ".center(59, '*') + "\n" + Line
+      end
+    end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/board'
+require_relative '../lib/player'
 
 # class Game Initiate @status, @moves, and @turn and able to increment on @moves, switch @turn
 # as well as update the @status by examining a mark and row_col_diagonals of last cell marked.
@@ -32,14 +33,14 @@ class Game
   private
 
   def assign_marks(first_player)
-    if first_player == 1
-      @player1.add_mark('X')
-      @player2.add_mark('O')
-      @current_player = @player1
-    else
+    if first_player == 2
       @player2.add_mark('X')
       @player1.add_mark('O')
       @current_player = @player2
+    else
+      @player1.add_mark('X')
+      @player2.add_mark('O')
+      @current_player = @player1
     end
   end
 
