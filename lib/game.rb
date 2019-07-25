@@ -12,7 +12,7 @@ class Game
   attr_reader :player2
   attr_reader :current_player
 
-  def initialize(player1, player2, first_player)
+  def initialize(player1, player2, first_player = 1)
     @status = 'continue'
     @board = Board.new
     @player1 = player1
